@@ -1,9 +1,9 @@
 """OpenAI API client."""
 
-from typing import List, Optional
+from typing import List, Optional, Union
 from openai import OpenAI, OpenAIError
-from .apiclient import APIClient
-from .message import Message, system_message
+from llmapi.base_client import APIClient
+from llmapi.message import Message, system_message
 
 
 class OpenAIClient(APIClient):
@@ -26,14 +26,21 @@ class OpenAIClient(APIClient):
                          stop=stop[:4] if stop is not None else None,
                          temperature=temperature)
 
-    def send_messages(self, messages: List[Message], *, max_tokens=600):
+    def send(self, messages: Union[Message, List[Message]], *, max_tokens=600):
         """Create a chat completion."""
+        if isinstance(messages, Message):
+            messages = [messages]
+
         payload = {
             "model": self.model,
             "temperature": self.temperature,
-            "messages": [system_message(self.instructions), *messages],
+            "messages": [system_message(self.instructions)._asdict(), *messages],
             "max_tokens": max_tokens,
             "stop": self.stop
         }
 
-        return self.client.chat.completions.create(**payload)
+        response = self.client.chat.completions.create(**payload)
+        return {
+            "content": response.choices[0].message.content,
+            **{k: v for k, v in response.model_dump().items() if k != 'choices'}
+        }

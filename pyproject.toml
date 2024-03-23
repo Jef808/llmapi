@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "llmapi"
+version = "0.1.0"
+description = "A small project for interacting with LLM APIs"
+authors = ["Your Name <your@email.com>"]
+readme = "README.md"
+packages = [{include = "llmapi"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+
+[tool.poetry.scripts]
+llmapi = "llmapi.api:main"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

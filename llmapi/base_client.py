@@ -1,7 +1,8 @@
 """This module provides a client for sending messages to an API."""
 
-from typing import List, Optional
-from .message import Message
+from typing import Optional, List, Literal
+from llmapi.message import Message
+
 
 class APIClient:
     """A base class for clients to send messages to an API."""
@@ -20,4 +21,3 @@ class APIClient:
 
     def send_messages(self, messages: List[Message], *, max_tokens):
         """Send messages to the API and return the response."""
-        ...

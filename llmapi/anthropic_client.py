@@ -1,9 +1,9 @@
 """Anthropic API client."""
 
-from typing import Optional, List
+from typing import List, Optional, Union
 from anthropic import Anthropic
-from .apiclient import APIClient
-from .message import Message
+from llmapi.base_client import APIClient
+from llmapi.message import Message
 
 
 class AnthropicClient(APIClient):
@@ -27,7 +27,7 @@ class AnthropicClient(APIClient):
                          stop=stop,
                          temperature=temperature)
 
-    def send_messages(self, messages: List[Message], *, max_tokens=600):
+    def send(self, messages: Union[Message, List[Message]], *, max_tokens=600):
         """Create a chat completion."""
         payload = {
             "model": self.model,
@@ -38,4 +38,8 @@ class AnthropicClient(APIClient):
             "system": self.instructions
         }
 
-        return self.client.messages.create(**payload)
+        response = self.client.messages.create(**payload)
+        return {
+            "content": response.content[0].text,
+            **{k: v for k, v in response.model_dump().items() if k != 'content'}
+        }
