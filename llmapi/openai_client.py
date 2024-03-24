@@ -1,6 +1,6 @@
 """OpenAI API client."""
 
-from typing import List, Optional, Union
+from typing import List, Literal, Optional, Union
 from openai import OpenAI
 from llmapi.base_client import APIClient
 from llmapi.message import Message, system_message
@@ -11,19 +11,20 @@ class OpenAIClient(APIClient):
 
     model_alias = {
         "big": "gpt-4-turbo-preview",
-        "medium": "gpt-3.5-turbo"
+        "medium": "gpt-3.5-turbo",
+        "small": "gpt-3.5-turbo"
     }
 
     def __init__(self,
                  *,
-                 instructions="You are a useful assistant",
-                 model="big",
-                 stop: Optional[List[str]] = None,
+                 instructions: Optional[str],
+                 model: Optional[Literal['big', 'medium', 'small']],
+                 stop: Optional[Union[str, List[str]]],
                  temperature=0.7):
         super().__init__(client=OpenAI(),
-                         instructions=instructions,
-                         model=self.model_alias[model],
-                         stop=stop[:4] if stop is not None else None,
+                         instructions='You are a useful assistant' if instructions is None else instructions,
+                         model=self.model_alias['big'] if model is None else self.model_alias[model],
+                         stop=[stop] if stop is not None and isinstance(stop, str) else stop[:4] if stop is not None and isinstance(stop, list) else None,
                          temperature=temperature)
 
     def send(self, messages: Union[Message, List[Message]], *, max_tokens=600):

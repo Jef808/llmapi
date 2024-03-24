@@ -1,6 +1,6 @@
 """Anthropic API client."""
 
-from typing import List, Optional, Union
+from typing import List, Literal, Optional, Union
 from anthropic import Anthropic
 from llmapi.base_client import APIClient
 from llmapi.message import Message
@@ -17,14 +17,14 @@ class AnthropicClient(APIClient):
 
     def __init__(self,
                  *,
-                 instructions="You are a useful assistant",
-                 model="big",
-                 stop: Optional[List[str]] = None,
+                 instructions: Optional[str],
+                 model=Literal['big', 'medium', 'small'],
+                 stop: Optional[Union[str, List[str]]],
                  temperature=0.7):
         super().__init__(client=Anthropic(),
-                         instructions=instructions,
-                         model=self.model_alias[model],
-                         stop=stop,
+                         instructions="You are a useful assistant" if instructions is None else instructions,
+                         model=self.model_alias['big'] if model is None else self.model_alias[model],
+                         stop=[stop] if stop is not None and isinstance(stop, str) else stop,
                          temperature=temperature)
 
     def send(self, messages: Union[Message, List[Message]], *, max_tokens=600):
