@@ -1,7 +1,7 @@
 """OpenAI API client."""
 
 from typing import List, Optional, Union
-from openai import OpenAI, OpenAIError
+from openai import OpenAI
 from llmapi.base_client import APIClient
 from llmapi.message import Message, system_message
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/jfa/projects/llmapi/.venv/bin/python
 
 from typing import Literal, Optional, List
 from llmapi.anthropic_client import AnthropicClient
